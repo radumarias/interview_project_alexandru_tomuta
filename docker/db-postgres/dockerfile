@@ -1,0 +1,29 @@
+FROM postgres
+
+### Install Java, Unzip
+RUN apt-get update && apt-get install -y \
+    unzip
+### openjdk-7-jdk
+
+RUN add-apt-repository ppa:webupd8team/java
+RUN apt-get update
+RUN apt-get install oracle-java8-installer
+RUN apt-get install oracle-java8-set-default
+RUN update-alternatives --config java
+RUN update-alternatives --config javac
+
+### Define commonly used JAVA_HOME variable
+### ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
+
+ENV POSTGRES_PASSWORD=postgres
+ENV POSTGRES_USER=postgres
+
+### setup gui + privileges for new user
+RUN mkdir /var/www
+COPY pgstudio_2.0-bin.zip /var/www
+RUN unzip /var/www/pgstudio_2.0-bin.zip -d /var/www
+
+### run gui + postgres db
+### TODO we shouldn't run this as root
+EXPOSE 8080 80 5432
+RUN bash /var/www/pgstudio_2.0-bin/bin/catalina.sh start
