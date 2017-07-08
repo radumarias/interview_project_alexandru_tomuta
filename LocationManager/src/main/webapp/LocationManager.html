@@ -47,17 +47,60 @@
 
     <h1>Web Application Starter Project</h1>
 
-    <table align="center">
+    <table align="center" id="main-table">
       <tr>
-        <td colspan="2" style="font-weight:bold;">Please enter your name:</td>
+        <td colspan="2" style="font-weight:bold;">Enter a city to search for places:</td>
       </tr>
       <tr>
-        <td id="nameFieldContainer"></td>
+          <td colspan="2">
+              <div id="pac-card" style="width:100%;">
+                  <div id="pac-container" style="width:100%;">
+                      <input id="pac-input" type="text" placeholder="Enter a location" style="width:80%">
+                  </div>
+              </div>
+          </td>
         <td id="sendButtonContainer"></td>
       </tr>
+        <tr>
+            <td colspan="2" style="color:red;" id="errorLabelContainer"></td>
+        </tr>
       <tr>
-        <td colspan="2" style="color:red;" id="errorLabelContainer"></td>
+          <td colspan="2" id="serverResponseContainer"></td>
       </tr>
     </table>
+
+    <script>
+
+        // used for communicating to GWT client app
+        var coordinates;
+        function initMap() {
+            var card = document.getElementById('pac-card');
+            var input = document.getElementById('pac-input');
+            var types = document.getElementById('type-selector');
+            var strictBounds = document.getElementById('strict-bounds-selector');
+
+            var autocomplete = new google.maps.places.Autocomplete(input);
+
+            var infowindow = new google.maps.InfoWindow();
+            var infowindowContent = document.getElementById('infowindow-content');
+            infowindow.setContent(infowindowContent);
+
+            autocomplete.addListener('place_changed', function() {
+                infowindow.close();
+                var place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    // User entered the name of a Place that was not suggested and
+                    // pressed the Enter key, or the Place Details request failed.
+                    window.alert("No details available for input: '" + place.name + "'");
+                    return;
+                }
+
+                //closures.. sheesh
+                coordinates = place.geometry.location.lat() + ',' + place.geometry.location.lng();
+            });
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYKeYbtj6RM0K_StydLfmG_bhJGxDDA-k&libraries=places&callback=initMap"
+            defer></script>
   </body>
 </html>

@@ -10,12 +10,9 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import interviu.alex.shared.model.googleapi.Location;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -32,61 +29,34 @@ public class LocationManager implements EntryPoint {
   /**
    * Create a remote service proxy to talk to the server-side Greeting service.
    */
-  private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
+  private final LocationSearchServiceAsync locationService = GWT.create(LocationSearchService.class);
 
   private final Messages messages = GWT.create(Messages.class);
+
+  //https://maps.googleapis.com/maps/api/place/autocomplete/output?parameters
 
   /**
    * This is the entry point method.
    */
   public void onModuleLoad() {
+
+//    final TextBox citySearch = new TextBox();
+//    citySearch.setText( messages.citySearchField() );
+
     final Button sendButton = new Button( messages.sendButton() );
-    final TextBox nameField = new TextBox();
-    nameField.setText( messages.nameField() );
     final Label errorLabel = new Label();
 
-    // We can add style names to widgets
-    sendButton.addStyleName("sendButton");
+    final Label serverResponseLabel = new Label();
+    serverResponseLabel.setVisible(false);
 
-    // Add the nameField and sendButton to the RootPanel
-    // Use RootPanel.get() to get the entire body element
-    RootPanel.get("nameFieldContainer").add(nameField);
+//    RootPanel.get("searchCityFieldContainer").add(citySearch);
     RootPanel.get("sendButtonContainer").add(sendButton);
     RootPanel.get("errorLabelContainer").add(errorLabel);
+    RootPanel.get("serverResponseContainer").add(serverResponseLabel);
 
-    // Focus the cursor on the name field when the app loads
-    nameField.setFocus(true);
-    nameField.selectAll();
+//    citySearch.setFocus(true);
+//    citySearch.selectAll();
 
-    // Create the popup dialog box
-    final DialogBox dialogBox = new DialogBox();
-    dialogBox.setText("Remote Procedure Call");
-    dialogBox.setAnimationEnabled(true);
-    final Button closeButton = new Button("Close");
-    // We can set the id of a widget by accessing its Element
-    closeButton.getElement().setId("closeButton");
-    final Label textToServerLabel = new Label();
-    final HTML serverResponseLabel = new HTML();
-    VerticalPanel dialogVPanel = new VerticalPanel();
-    dialogVPanel.addStyleName("dialogVPanel");
-    dialogVPanel.add(new HTML("<b>Sending name to the server:</b>"));
-    dialogVPanel.add(textToServerLabel);
-    dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
-    dialogVPanel.add(serverResponseLabel);
-    dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-    dialogVPanel.add(closeButton);
-    dialogBox.setWidget(dialogVPanel);
-
-    // Add a handler to close the DialogBox
-    closeButton.addClickHandler(new ClickHandler() {
-      public void onClick(ClickEvent event) {
-        dialogBox.hide();
-        sendButton.setEnabled(true);
-        sendButton.setFocus(true);
-      }
-    });
-
-    // Create a handler for the sendButton and nameField
     class MyHandler implements ClickHandler, KeyUpHandler {
       /**
        * Fired when the user clicks on the sendButton.
@@ -110,40 +80,57 @@ public class LocationManager implements EntryPoint {
       private void sendNameToServer() {
         // First, we validate the input.
         errorLabel.setText("");
-        String textToServer = nameField.getText();
-        if (!FieldVerifier.isValidName(textToServer)) {
-          errorLabel.setText("Please enter at least four characters");
-          return;
-        }
+
+        Location location = buildLocation();
 
         // Then, we send the input to the server.
         sendButton.setEnabled(false);
-        textToServerLabel.setText(textToServer);
         serverResponseLabel.setText("");
-        greetingService.greetServer(textToServer, new AsyncCallback<String>() {
+        locationService.searchByCity(location, new AsyncCallback<String>() {
           public void onFailure(Throwable caught) {
             // Show the RPC error message to the user
-            dialogBox.setText("Remote Procedure Call - Failure");
             serverResponseLabel.addStyleName("serverResponseLabelError");
-            serverResponseLabel.setHTML(SERVER_ERROR);
-            dialogBox.center();
-            closeButton.setFocus(true);
+            serverResponseLabel.setText(SERVER_ERROR);
+            serverResponseLabel.setVisible(true);
+            sendButton.setEnabled(true);
           }
 
           public void onSuccess(String result) {
-            dialogBox.setText("Remote Procedure Call");
             serverResponseLabel.removeStyleName("serverResponseLabelError");
-            serverResponseLabel.setHTML(result);
-            dialogBox.center();
-            closeButton.setFocus(true);
+            serverResponseLabel.setText(result);
+            serverResponseLabel.setVisible(true);
+            sendButton.setEnabled(true);
           }
         });
       }
     }
-
-    // Add a handler to send the name to the server
     MyHandler handler = new MyHandler();
     sendButton.addClickHandler(handler);
-    nameField.addKeyUpHandler(handler);
   }
+
+  private Location buildLocation() {
+    Location location = new Location();
+    String coordinates = getCoordinates();
+    String[] split = coordinates.split(",");
+
+    String lat = split[0];
+    String lng = split[1];
+
+    //trim them a bit
+    lat = lat.substring(0, 6);
+    lng = lng.substring(0, 6);
+
+    location.setLat(Double.parseDouble(lat));
+    location.setLng(Double.parseDouble(lng));
+    return location;
+  }
+
+  /**
+   * Getting JS variable via native interface
+   * @return the update coordinates variable. e.g. structure "46.123,-24.100"
+   */
+  public native String getCoordinates()/*-{
+        return $wnd.coordinates;
+  }-*/;
+
 }

@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import interviu.alex.shared.model.googleapi.Location;
 
 /**
  * GWT JUnit <b>integration</b> tests must extend GWTTestCase.
@@ -39,11 +40,11 @@ public class GwtTestLocationManager extends GWTTestCase {
 
   /**
    * This test will send a request to the server using the greetServer method in
-   * GreetingService and verify the response.
+   * LocationSearchService and verify the response.
    */
   public void testGreetingService() {
     // Create the service that we will test.
-    GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
+    LocationSearchServiceAsync greetingService = GWT.create(LocationSearchService.class);
     ServiceDefTarget target = (ServiceDefTarget) greetingService;
     target.setServiceEntryPoint(GWT.getModuleBaseURL() + "LocationManager/greet");
 
@@ -53,7 +54,7 @@ public class GwtTestLocationManager extends GWTTestCase {
     delayTestFinish(10000);
 
     // Send a request to the server.
-    greetingService.greetServer("GWT User", new AsyncCallback<String>() {
+    greetingService.searchByCity(new Location(), new AsyncCallback<String>() {
       public void onFailure(Throwable caught) {
         // The request resulted in an unexpected error.
         fail("Request failure: " + caught.getMessage());

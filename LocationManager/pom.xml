@@ -17,10 +17,6 @@
   <version>1.0</version>
   <name>LocationManager :: App</name>
 
-  
-
-
-
   <dependencies>
     <dependency>
       <groupId>com.google.inject.extensions</groupId>
@@ -46,6 +42,14 @@
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -56,7 +60,28 @@
       <!-- Mojo's Maven Plugin for GWT -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <artifactId>gwt-maven-plugin</artifactId>
+          <artifactId>gwt-maven-plugin</artifactId>
+          <version>2.8.0</version>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>compile</goal>
+                      <goal>test</goal>
+                      <goal>generateAsync</goal>
+                  </goals>
+              </execution>
+          </executions>
+          <!-- Plugin configuration. There are many available options, see
+            gwt-maven-plugin documentation at codehaus.org -->
+          <configuration>
+              <runTarget>LocationManager.html</runTarget>
+              <modules>
+                  <module>interviu.alex.LocationManager</module>
+              </modules>
+              <webappDirectory>${project.build.directory}\${project.artifactId}-${project.version}</webappDirectory>
+              <draftCompile>true</draftCompile>
+              <optimizationLevel>1</optimizationLevel>
+          </configuration>
       </plugin>
     </plugins>
   </build>
