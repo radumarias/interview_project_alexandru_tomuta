@@ -1,6 +1,5 @@
 package interviu.alex.client;
 
-import interviu.alex.shared.FieldVerifier;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -33,15 +32,10 @@ public class LocationManager implements EntryPoint {
 
   private final Messages messages = GWT.create(Messages.class);
 
-  //https://maps.googleapis.com/maps/api/place/autocomplete/output?parameters
-
   /**
    * This is the entry point method.
    */
   public void onModuleLoad() {
-
-//    final TextBox citySearch = new TextBox();
-//    citySearch.setText( messages.citySearchField() );
 
     final Button sendButton = new Button( messages.sendButton() );
     final Label errorLabel = new Label();
@@ -49,20 +43,16 @@ public class LocationManager implements EntryPoint {
     final Label serverResponseLabel = new Label();
     serverResponseLabel.setVisible(false);
 
-//    RootPanel.get("searchCityFieldContainer").add(citySearch);
     RootPanel.get("sendButtonContainer").add(sendButton);
     RootPanel.get("errorLabelContainer").add(errorLabel);
     RootPanel.get("serverResponseContainer").add(serverResponseLabel);
-
-//    citySearch.setFocus(true);
-//    citySearch.selectAll();
 
     class MyHandler implements ClickHandler, KeyUpHandler {
       /**
        * Fired when the user clicks on the sendButton.
        */
       public void onClick(ClickEvent event) {
-        sendNameToServer();
+        sendCoordinatesToServer();
       }
 
       /**
@@ -70,25 +60,22 @@ public class LocationManager implements EntryPoint {
        */
       public void onKeyUp(KeyUpEvent event) {
         if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-          sendNameToServer();
+          sendCoordinatesToServer();
         }
       }
 
       /**
        * Send the name from the nameField to the server and wait for a response.
        */
-      private void sendNameToServer() {
-        // First, we validate the input.
+      private void sendCoordinatesToServer() {
         errorLabel.setText("");
 
         Location location = buildLocation();
 
-        // Then, we send the input to the server.
         sendButton.setEnabled(false);
         serverResponseLabel.setText("");
         locationService.searchByCity(location, new AsyncCallback<String>() {
           public void onFailure(Throwable caught) {
-            // Show the RPC error message to the user
             serverResponseLabel.addStyleName("serverResponseLabelError");
             serverResponseLabel.setText(SERVER_ERROR);
             serverResponseLabel.setVisible(true);

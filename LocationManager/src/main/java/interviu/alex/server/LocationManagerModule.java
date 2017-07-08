@@ -2,11 +2,9 @@ package interviu.alex.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Singleton;
-import com.google.inject.servlet.RequestScoped;
 import com.google.inject.servlet.ServletModule;
 import interviu.alex.server.service.GooglePlacesService;
 import interviu.alex.server.service.remote.LocationSearchServiceImpl;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Module configuration
