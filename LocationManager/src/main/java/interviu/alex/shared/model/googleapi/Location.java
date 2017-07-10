@@ -13,25 +13,25 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Location implements Serializable{
 
-    private Double lat;
-    private Double lng;
+    private Float lat;
+    private Float lng;
 
     public Location() {
     }
 
-    public Double getLat() {
+    public Float getLat() {
         return lat;
     }
 
-    public void setLat(Double lat) {
+    public void setLat(Float lat) {
         this.lat = lat;
     }
 
-    public Double getLng() {
+    public Float getLng() {
         return lng;
     }
 
-    public void setLng(Double lng) {
+    public void setLng(Float lng) {
         this.lng = lng;
     }
 

@@ -6,6 +6,7 @@ import interviu.alex.client.LocationSearchService;
 import interviu.alex.server.LocationManagerModule;
 import interviu.alex.server.model.GooglePlacesResponse;
 import interviu.alex.server.service.GooglePlacesService;
+import interviu.alex.server.service.persistence.model.LocationEntity;
 import interviu.alex.shared.FieldVerifier;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import interviu.alex.shared.model.googleapi.Location;
@@ -33,6 +34,10 @@ public class LocationSearchServiceImpl extends RemoteServiceServlet implements
 
   private String buildListOfPlaces(GooglePlacesResponse response){
       return response.getResults().stream().map(Place::getName).collect(Collectors.joining(", "));
+  }
+
+  public void addNewLocation(LocationEntity locationEntity){
+
   }
 
 }

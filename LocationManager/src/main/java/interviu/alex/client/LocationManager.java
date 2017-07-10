@@ -107,8 +107,8 @@ public class LocationManager implements EntryPoint {
     lat = lat.substring(0, 6);
     lng = lng.substring(0, 6);
 
-    location.setLat(Double.parseDouble(lat));
-    location.setLng(Double.parseDouble(lng));
+    location.setLat(Float.parseFloat(lat));
+    location.setLng(Float.parseFloat(lng));
     return location;
   }
 

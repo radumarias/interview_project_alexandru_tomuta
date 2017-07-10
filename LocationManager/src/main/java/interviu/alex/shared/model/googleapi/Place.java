@@ -178,7 +178,7 @@ public class Place implements Serializable {
 
     @Override
     public String toString() {
-        return "Place{" +
+        return "PlaceEntity{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", placeId='" + placeId + '\'' +
