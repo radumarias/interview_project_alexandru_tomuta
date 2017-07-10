@@ -19,6 +19,7 @@ TODO:
 * Do we need to make Google API calls from back-end? We can just move these API calls in client and
 any CRUD operations - saved in back-end db.
 * DB integration - add Hibernate support, entities, persistence layer *almost ready*
+* Add browser geolocation - find current location instead of a search.
 * Persist locations to DB
 * Display locations from DB on client-side
 * Enable CRUD operation for locations
