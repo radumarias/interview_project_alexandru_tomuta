@@ -1,6 +1,7 @@
 package interviu.alex.server.service;
 
 import interviu.alex.server.model.GooglePlacesResponse;
+import interviu.alex.shared.model.MyLocation;
 import interviu.alex.shared.model.googleapi.Location;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -32,11 +33,11 @@ public class GooglePlacesService {
     public GooglePlacesService(){ // no-arg
     }
 
-    public GooglePlacesResponse queryGoogleForPlaces(Location searchKey){
+    public GooglePlacesResponse queryGoogleForPlaces(MyLocation searchKey){
         RestTemplate restTemplate = new RestTemplate();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + RESPONSE_CONTENT_TYPE)
-                .queryParam(LOCATION, searchKey.getLat()+","+searchKey.getLng())
+                .queryParam(LOCATION, searchKey.getLatitude()+","+searchKey.getLongitude())
                 .queryParam(RADIUS, RADIUS_SIZE)
                 .queryParam(KEY, API_KEY);
 

@@ -2,6 +2,7 @@ package interviu.alex.client;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import interviu.alex.shared.model.MyLocation;
 import interviu.alex.shared.model.googleapi.Location;
 
 /**
@@ -9,5 +10,5 @@ import interviu.alex.shared.model.googleapi.Location;
  */
 @RemoteServiceRelativePath("main")
 public interface LocationSearchService extends RemoteService {
-  String searchByCity(Location location) throws IllegalArgumentException;
+  MyLocation searchByCity(MyLocation location) throws IllegalArgumentException;
 }

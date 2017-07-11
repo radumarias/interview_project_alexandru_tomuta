@@ -1,6 +1,7 @@
 package interviu.alex.shared.model.googleapi;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -22,6 +23,11 @@ public class Photo implements Serializable {
     private String photoRef;
     @JsonProperty("html_attributions")
     private List<String > htmlAttributes;
+
+    //domain specific data
+
+    @JsonIgnore
+    private Integer id;
 
     public Photo() {
     }
@@ -56,6 +62,14 @@ public class Photo implements Serializable {
 
     public void setHtmlAttributes(List<String> htmlAttributes) {
         this.htmlAttributes = htmlAttributes;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override

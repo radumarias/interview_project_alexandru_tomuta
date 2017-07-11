@@ -6,7 +6,9 @@ import com.google.inject.persist.PersistFilter;
 import com.google.inject.servlet.ServletModule;
 import interviu.alex.server.service.GooglePlacesService;
 import interviu.alex.server.service.persistence.LocationDAO;
+import interviu.alex.server.service.persistence.PlaceDAO;
 import interviu.alex.server.service.remote.LocationSearchServiceImpl;
+import interviu.alex.shared.mapper.MyLocationMapper;
 
 /**
  * Module configuration
@@ -21,6 +23,8 @@ public class LocationManagerModule extends ServletModule{
         bind(GooglePlacesService.class).in(Singleton.class);
         bind(LocationSearchServiceImpl.class).in(Singleton.class);
         bind(LocationDAO.class).in(Singleton.class);
+        bind(PlaceDAO.class).in(Singleton.class);
+        bind(MyLocationMapper.class).in(Singleton.class);
 
         // TODO fix this:
         // Error in custom provider, com.google.inject.OutOfScopeException: Cannot access scoped [org.springframework.web.client.RestTemplate].

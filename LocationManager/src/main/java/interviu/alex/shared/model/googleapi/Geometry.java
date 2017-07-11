@@ -17,6 +17,10 @@ public class Geometry implements Serializable {
     public Geometry() {
     }
 
+    public Geometry(Location location) {
+        this.location = location;
+    }
+
     public Location getLocation() {
         return location;
     }

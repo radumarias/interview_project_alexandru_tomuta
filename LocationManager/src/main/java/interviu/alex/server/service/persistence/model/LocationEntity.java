@@ -24,6 +24,7 @@ import java.util.List;
 public class LocationEntity {
 
     public static final String FIND_LOCATIONS_BY_NAME = "findLocationsByName";
+    public static final String NAME = "name";
     public static final String FIND_ALL_LOCATIONS= "findAllLocations";
 
     @Id

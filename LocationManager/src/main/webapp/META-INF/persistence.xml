@@ -11,7 +11,7 @@
         <!-- JPA entities must be registered here -->
         <class>interviu.alex.server.service.persistence.model.LocationEntity</class>
         <class>interviu.alex.server.service.persistence.model.PlaceEntity</class>
-
+        <class>interviu.alex.server.service.persistence.model.PhotoEntity</class>
         <properties>
             <!-- vendor-specific properties go here -->
         </properties>

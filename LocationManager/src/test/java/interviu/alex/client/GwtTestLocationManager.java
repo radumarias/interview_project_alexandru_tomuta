@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import interviu.alex.shared.model.MyLocation;
 import interviu.alex.shared.model.googleapi.Location;
 
 /**
@@ -54,15 +55,15 @@ public class GwtTestLocationManager extends GWTTestCase {
     delayTestFinish(10000);
 
     // Send a request to the server.
-    greetingService.searchByCity(new Location(), new AsyncCallback<String>() {
+    greetingService.searchByCity(new MyLocation(), new AsyncCallback<MyLocation>() {
       public void onFailure(Throwable caught) {
         // The request resulted in an unexpected error.
         fail("Request failure: " + caught.getMessage());
       }
 
-      public void onSuccess(String result) {
+      public void onSuccess(MyLocation result) {
         // Verify that the response is correct.
-        assertTrue(result.startsWith("Hello, GWT User!"));
+        assertTrue(result != null);
 
         // Now that we have received a response, we need to tell the test runner
         // that the test is complete. You must call finishTest() after an

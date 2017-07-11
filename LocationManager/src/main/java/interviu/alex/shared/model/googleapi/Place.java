@@ -1,6 +1,7 @@
 package interviu.alex.shared.model.googleapi;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -16,7 +17,6 @@ import java.util.List;
 public class Place implements Serializable {
 
     private String icon;
-    private String id;
     private String name;
     private Float rating;
     private String reference;
@@ -38,6 +38,14 @@ public class Place implements Serializable {
     @JsonProperty("price_level")
     private Integer priceLevel;
 
+    // domain specific data
+
+    @JsonIgnore
+    private Integer id;
+
+    @JsonIgnore
+    private Boolean userEdited;
+
     public Place() {
     }
 
@@ -49,11 +57,11 @@ public class Place implements Serializable {
         this.icon = icon;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -151,6 +159,14 @@ public class Place implements Serializable {
 
     public void setAddressComponents(List<AddressComponent> addressComponents) {
         this.addressComponents = addressComponents;
+    }
+
+    public Boolean getUserEdited() {
+        return userEdited;
+    }
+
+    public void setUserEdited(Boolean userEdited) {
+        this.userEdited = userEdited;
     }
 
     public String getFormattedAddress() {

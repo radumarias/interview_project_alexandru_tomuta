@@ -26,7 +26,8 @@ public class LocationDAO {
 
     @Transactional
     public LocationEntity getLocationByName(String name){
-        return em.createNamedQuery(LocationEntity.FIND_LOCATIONS_BY_NAME, LocationEntity.class).getSingleResult();
+        return em.createNamedQuery(LocationEntity.FIND_LOCATIONS_BY_NAME, LocationEntity.class)
+                .setParameter(LocationEntity.NAME, name).getSingleResult();
     }
 
     @Transactional
@@ -43,4 +44,5 @@ public class LocationDAO {
     public void removeLocation(LocationEntity locationEntity){
         em.remove(locationEntity);
     }
+
 }

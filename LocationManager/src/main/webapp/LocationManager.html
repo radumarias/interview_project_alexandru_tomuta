@@ -73,6 +73,7 @@
 
         // used for communicating to GWT client app
         var coordinates;
+        var name;
         function initMap() {
             var card = document.getElementById('pac-card');
             var input = document.getElementById('pac-input');
@@ -97,6 +98,7 @@
 
                 //closures.. sheesh
                 coordinates = place.geometry.location.lat() + ',' + place.geometry.location.lng();
+                name = input.value();
             });
         }
     </script>

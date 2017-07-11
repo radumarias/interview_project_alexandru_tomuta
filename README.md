@@ -13,17 +13,16 @@ DONE:
 * Google API calls integration
 * Google API autocomplete for location search
 * Google API places response mapping - using Jackson Json mapper
+* DB integration - add Hibernate support, entities, persistence layer
+* Persist locations to DB
+* Enable CRUD operation for locations
+* Cross check location look-up with DB values and update accordingly
+* ~~Do we need to make Google API calls from back-end? We can just move these API calls in client and
+any CRUD operations - saved in back-end db.~~
 
 TODO:
 
-* Do we need to make Google API calls from back-end? We can just move these API calls in client and
-any CRUD operations - saved in back-end db.
-* DB integration - add Hibernate support, entities, persistence layer *almost ready*
-* Add browser geolocation - find current location instead of a search.
-* Persist locations to DB
 * Display locations from DB on client-side
-* Enable CRUD operation for locations
-* Cross check location look-up with DB values and update accordingly
 * Setup docker container for GWT app
 * Implement unit tests
 * Create module for Integration Tests

@@ -11,6 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import interviu.alex.shared.model.MyLocation;
 import interviu.alex.shared.model.googleapi.Location;
 
 /**
@@ -70,11 +71,11 @@ public class LocationManager implements EntryPoint {
       private void sendCoordinatesToServer() {
         errorLabel.setText("");
 
-        Location location = buildLocation();
+        MyLocation location = buildLocation();
 
         sendButton.setEnabled(false);
         serverResponseLabel.setText("");
-        locationService.searchByCity(location, new AsyncCallback<String>() {
+        locationService.searchByCity(location, new AsyncCallback<MyLocation>() {
           public void onFailure(Throwable caught) {
             serverResponseLabel.addStyleName("serverResponseLabelError");
             serverResponseLabel.setText(SERVER_ERROR);
@@ -82,9 +83,9 @@ public class LocationManager implements EntryPoint {
             sendButton.setEnabled(true);
           }
 
-          public void onSuccess(String result) {
+          public void onSuccess(MyLocation result) {
             serverResponseLabel.removeStyleName("serverResponseLabelError");
-            serverResponseLabel.setText(result);
+//            serverResponseLabel.setText(result));
             serverResponseLabel.setVisible(true);
             sendButton.setEnabled(true);
           }
@@ -95,8 +96,8 @@ public class LocationManager implements EntryPoint {
     sendButton.addClickHandler(handler);
   }
 
-  private Location buildLocation() {
-    Location location = new Location();
+  private MyLocation buildLocation() {
+    MyLocation location = new MyLocation();
     String coordinates = getCoordinates();
     String[] split = coordinates.split(",");
 
@@ -107,8 +108,10 @@ public class LocationManager implements EntryPoint {
     lat = lat.substring(0, 6);
     lng = lng.substring(0, 6);
 
-    location.setLat(Float.parseFloat(lat));
-    location.setLng(Float.parseFloat(lng));
+    location.setLatitude(Float.parseFloat(lat));
+    location.setLongitude(Float.parseFloat(lng));
+
+    location.setName(getName());
     return location;
   }
 
@@ -118,6 +121,10 @@ public class LocationManager implements EntryPoint {
    */
   public native String getCoordinates()/*-{
         return $wnd.coordinates;
+  }-*/;
+
+  public native String getName()/*-{
+      return $wnd.name;
   }-*/;
 
 }

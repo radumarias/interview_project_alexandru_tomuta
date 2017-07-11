@@ -1,15 +1,25 @@
 package interviu.alex.server.service.persistence.model;
 
-import interviu.alex.shared.model.googleapi.Location;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Created by alexa on 7/10/2017.
  */
 @Entity
+@NamedQueries({
+        @NamedQuery(name = PlaceEntity.FIND_ALL_FAVOURITE_PLACES, query = "select l from PLACE l where l.FAVOURITE = true"),
+})
 public class PlaceEntity {
+
+    public static final String FIND_ALL_FAVOURITE_PLACES = "findFavouritePlaces";
 
     @Id
     @GeneratedValue
@@ -18,9 +28,6 @@ public class PlaceEntity {
     @Column(name = "NAME")
     @NotNull
     private String name;
-
-    @Column(name = "FAVOURITE")
-    private Boolean favourite;
 
     //todo change this to an enum
     @Column(name = "TYPE")
@@ -40,13 +47,18 @@ public class PlaceEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "LOCATION_ID")
-    private Location location;
+    private LocationEntity location;
 
-    @Column(name = "PICTURE_URL")
-    private String pictureUrl;
+    @OneToMany(mappedBy = "place")
+    @Cascade(CascadeType.ALL)
+    private List<PhotoEntity> photoList;
 
-    @Column(name = "COMMENT")
-    private String comment;
+    @NotNull
+    @Column(name = "GOOGLE_PLACE_ID")
+    private String googlePlaceId;
+
+    @Column(name = "USER_EDITED")
+    private Boolean userEdited;
 
     public Integer getId() {
         return id;
@@ -62,14 +74,6 @@ public class PlaceEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Boolean getFavourite() {
-        return favourite;
-    }
-
-    public void setFavourite(Boolean favourite) {
-        this.favourite = favourite;
     }
 
     public String getType() {
@@ -104,63 +108,35 @@ public class PlaceEntity {
         this.longitude = longitude;
     }
 
-    public Location getLocation() {
+    public LocationEntity getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(LocationEntity location) {
         this.location = location;
     }
 
-    public String getPictureUrl() {
-        return pictureUrl;
+    public Boolean getUserEdited() {
+        return userEdited;
     }
 
-    public void setPictureUrl(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
+    public void setUserEdited(Boolean userEdited) {
+        this.userEdited = userEdited;
     }
 
-    public String getComment() {
-        return comment;
+    public List<PhotoEntity> getPhotoList() {
+        return photoList;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setPhotoList(List<PhotoEntity> photoList) {
+        this.photoList = photoList;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PlaceEntity that = (PlaceEntity) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (latitude != null ? !latitude.equals(that.latitude) : that.latitude != null) return false;
-        return longitude != null ? longitude.equals(that.longitude) : that.longitude == null;
+    public String getGooglePlaceId() {
+        return googlePlaceId;
     }
 
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (latitude != null ? latitude.hashCode() : 0);
-        result = 31 * result + (longitude != null ? longitude.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "PlaceEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", favourite=" + favourite +
-                ", type='" + type + '\'' +
-                ", Address='" + Address + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", location=" + location +
-                ", pictureUrl='" + pictureUrl + '\'' +
-                ", comment='" + comment + '\'' +
-                '}';
+    public void setGooglePlaceId(String googlePlaceId) {
+        this.googlePlaceId = googlePlaceId;
     }
 }
