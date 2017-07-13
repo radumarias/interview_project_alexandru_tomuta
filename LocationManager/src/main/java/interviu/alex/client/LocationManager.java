@@ -1,5 +1,6 @@
 package interviu.alex.client;
 
+import com.google.gwt.cell.client.*;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -7,12 +8,16 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.view.client.ListDataProvider;
 import interviu.alex.shared.model.MyLocation;
-import interviu.alex.shared.model.googleapi.Location;
+import interviu.alex.shared.model.googleapi.Place;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -41,12 +46,20 @@ public class LocationManager implements EntryPoint {
     final Button sendButton = new Button( messages.sendButton() );
     final Label errorLabel = new Label();
 
+
     final Label serverResponseLabel = new Label();
     serverResponseLabel.setVisible(false);
 
     RootPanel.get("sendButtonContainer").add(sendButton);
     RootPanel.get("errorLabelContainer").add(errorLabel);
-    RootPanel.get("serverResponseContainer").add(serverResponseLabel);
+    CellTable<Place> table = buildDataTable();
+    RootPanel.get("serverResponseContainer").add(table);
+
+    // Create a data provider.
+    ListDataProvider<Place> dataProvider = new ListDataProvider<>();
+
+    // Connect the table to the data provider.
+    dataProvider.addDataDisplay(table);
 
     class MyHandler implements ClickHandler, KeyUpHandler {
       /**
@@ -85,7 +98,8 @@ public class LocationManager implements EntryPoint {
 
           public void onSuccess(MyLocation result) {
             serverResponseLabel.removeStyleName("serverResponseLabelError");
-//            serverResponseLabel.setText(result));
+            dataProvider.getList().clear();
+            dataProvider.getList().addAll(result.getPlaceList());
             serverResponseLabel.setVisible(true);
             sendButton.setEnabled(true);
           }
@@ -96,32 +110,101 @@ public class LocationManager implements EntryPoint {
     sendButton.addClickHandler(handler);
   }
 
-  private MyLocation buildLocation() {
-    MyLocation location = new MyLocation();
-    String coordinates = getCoordinates();
-    String[] split = coordinates.split(",");
+  private CellTable<Place> buildDataTable() {
+      CellTable<Place> table = new CellTable<>();
 
-    String lat = split[0];
-    String lng = split[1];
+      Column<Place, String> imageColumn = new Column<Place, String>(new ImageCell()){
+          @Override
+          public String getValue(Place place) {
+              /*Image image = null;
+              Optional<Photo> first = place.getPhotos().stream().findFirst()
+                      .ifPresent(photo -> image = new Image(photo.getPhotoRef()));*/
+              // todo build google request for image url
+              return null;
+          }
+      };
+      table.addColumn(imageColumn, "Images");
 
-    //trim them a bit
-    lat = lat.substring(0, 6);
-    lng = lng.substring(0, 6);
+      TextColumn<Place> addressColumn = new TextColumn<Place>() {
+          @Override
+          public String getValue(Place object) {
+              return object.getFormattedAddress();
+          }
+      };
+      table.addColumn(addressColumn, "Address");
 
-    location.setLatitude(Float.parseFloat(lat));
-    location.setLongitude(Float.parseFloat(lng));
+      Column<Place, Number> latColumn = new Column<Place, Number>(new NumberCell()) {
+          @Override
+          public Float getValue(Place object) {
+              return object.getGeometry().getLocation().getLat();
+          }
+      };
+      table.addColumn(latColumn, "Latitude");
 
-    location.setName(getName());
-    return location;
+      Column<Place, Number> lngColumn = new Column<Place, Number>(new NumberCell()) {
+          @Override
+          public Float getValue(Place object) {
+              return object.getGeometry().getLocation().getLng();
+          }
+      };
+      table.addColumn(lngColumn, "Longitude");
+
+
+      TextColumn<Place> nameColumn = new TextColumn<Place>() {
+          @Override
+          public String getValue(Place place) {
+              return place.getName();
+          }
+      };
+      nameColumn.setSortable(true);
+      table.addColumn(nameColumn, "Name");
+
+      Column<Place, Number> ratingColumn = new Column<Place, Number>(new NumberCell()) {
+          @Override
+          public Float getValue(Place place) {
+              return place.getRating();
+          }
+      };
+      ratingColumn.setSortable(true);
+      table.addColumn(ratingColumn, "Rating");
+
+      TextColumn<Place> googlePlaceIdColumn = new TextColumn<Place>() {
+          @Override
+          public String getValue(Place place) {
+              return place.getPlaceId();
+          }
+      };
+      table.addColumn(googlePlaceIdColumn, "Google Place Id");
+
+      return table;
   }
+
+    private MyLocation buildLocation() {
+        MyLocation location = new MyLocation();
+
+        String jsLat = getLat();
+        String trimmedLat = jsLat.substring(0, 6);
+        location.setLatitude(Float.parseFloat(trimmedLat));
+
+        String jsLng = getLng();
+        String trimmedLng = jsLng.substring(0, 6);
+        location.setLongitude(Float.parseFloat(trimmedLng));
+
+        location.setName(getName());
+        return location;
+    }
 
   /**
    * Getting JS variable via native interface
    * @return the update coordinates variable. e.g. structure "46.123,-24.100"
    */
-  public native String getCoordinates()/*-{
-        return $wnd.coordinates;
+  public native String getLat()/*-{
+        return $wnd.lat;
   }-*/;
+
+    public native String getLng()/*-{
+        return $wnd.lng;
+    }-*/;
 
   public native String getName()/*-{
       return $wnd.name;

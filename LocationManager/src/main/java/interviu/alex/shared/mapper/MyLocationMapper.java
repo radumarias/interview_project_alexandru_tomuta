@@ -38,7 +38,7 @@ public class MyLocationMapper {
         return locationEntity;
     }
 
-    private PlaceEntity mapPlaceEntity(Place place) {
+    public PlaceEntity mapPlaceEntity(Place place) {
         if(place == null){
             return null;
         }
@@ -50,11 +50,11 @@ public class MyLocationMapper {
         placeEntity.setLatitude(place.getGeometry().getLocation().getLat());
         placeEntity.setLongitude(place.getGeometry().getLocation().getLng());
         //map photos
-        Optional.of(place.getPhotos())
+        Optional.ofNullable(place.getPhotos())
                 .ifPresent(photos ->
                         placeEntity.setPhotoList(photos.stream().map(photo -> new PhotoEntity(photo.getPhotoRef()))
                                 .collect(Collectors.toList())));
-        Optional.of(placeEntity.getPhotoList())
+        Optional.ofNullable(placeEntity.getPhotoList())
                 .ifPresent(photoEntities ->
                         photoEntities.forEach(photo->photo.setPlace(placeEntity)));
         placeEntity.setGooglePlaceId(place.getPlaceId());
@@ -83,7 +83,7 @@ public class MyLocationMapper {
         return location;
     }
 
-    private Place mapPlace(PlaceEntity placeEntity) {
+    public Place mapPlace(PlaceEntity placeEntity) {
         if(placeEntity == null){
             return null;
         }
@@ -93,7 +93,7 @@ public class MyLocationMapper {
         place.setName(placeEntity.getName());
         place.setFormattedAddress(placeEntity.getAddress());
         place.setGeometry(new Geometry(new Location(placeEntity.getLatitude(), placeEntity.getLongitude())));
-        Optional.of(placeEntity.getPhotoList())
+        Optional.ofNullable(placeEntity.getPhotoList())
                 .ifPresent(list ->
                         place.setPhotos(list.stream()
                                 .map(this::mapPhoto)
@@ -105,7 +105,7 @@ public class MyLocationMapper {
         return place;
     }
 
-    private Photo mapPhoto(PhotoEntity photoEntity) {
+    public Photo mapPhoto(PhotoEntity photoEntity) {
         if(photoEntity == null) {
             return null;
         }

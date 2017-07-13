@@ -16,9 +16,9 @@ import java.util.List;
 public class GooglePlacesResponse {
 
     @JsonProperty("html_attributions")
-    List<String> htmlAttributions;
+    private List<String> htmlAttributions;
     private Status status;
-    List<Place> results;
+    private List<Place> results;
 
     public GooglePlacesResponse() {
     }

@@ -11,16 +11,19 @@ import javax.validation.constraints.NotNull;
 public class PhotoEntity {
 
     @Id
-    @GeneratedValue
-    private Integer Id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int Id;
 
     @Column(name = "PICTURE_REF")
     private String pictureRef;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "LOCATION_ID")
+    @JoinColumn(name = "PLACE_ID")
     private PlaceEntity place;
+
+    public PhotoEntity() {
+    }
 
     public PhotoEntity(String pictureRef) {
         this.pictureRef = pictureRef;
@@ -31,11 +34,11 @@ public class PhotoEntity {
         this.place = place;
     }
 
-    public Integer getId() {
+    public int getId() {
         return Id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         Id = id;
     }
 

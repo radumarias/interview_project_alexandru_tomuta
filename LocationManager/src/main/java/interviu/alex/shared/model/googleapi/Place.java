@@ -18,15 +18,16 @@ public class Place implements Serializable {
 
     private String icon;
     private String name;
-    private Float rating;
     private String reference;
     private String scope;
     private String vicinity;
     private List<String> types;
-
     private Geometry geometry;
+
     private List<Photo> photos;
 
+    @JsonProperty("rating")
+    private float rating;
     @JsonProperty("address_components")
     private List<AddressComponent> addressComponents;
     @JsonProperty("formatted_address")
@@ -36,15 +37,14 @@ public class Place implements Serializable {
     @JsonProperty("opening_hours")
     private OpenHours openHours;
     @JsonProperty("price_level")
-    private Integer priceLevel;
+    private int priceLevel;
 
     // domain specific data
 
     @JsonIgnore
-    private Integer id;
-
+    private int id;
     @JsonIgnore
-    private Boolean userEdited;
+    private boolean userEdited;
 
     public Place() {
     }
@@ -57,11 +57,11 @@ public class Place implements Serializable {
         this.icon = icon;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -73,11 +73,11 @@ public class Place implements Serializable {
         this.name = name;
     }
 
-    public Float getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(Float rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
@@ -145,11 +145,11 @@ public class Place implements Serializable {
         this.openHours = openHours;
     }
 
-    public Integer getPriceLevel() {
+    public int getPriceLevel() {
         return priceLevel;
     }
 
-    public void setPriceLevel(Integer priceLevel) {
+    public void setPriceLevel(int priceLevel) {
         this.priceLevel = priceLevel;
     }
 
@@ -161,11 +161,11 @@ public class Place implements Serializable {
         this.addressComponents = addressComponents;
     }
 
-    public Boolean getUserEdited() {
+    public boolean getUserEdited() {
         return userEdited;
     }
 
-    public void setUserEdited(Boolean userEdited) {
+    public void setUserEdited(boolean userEdited) {
         this.userEdited = userEdited;
     }
 

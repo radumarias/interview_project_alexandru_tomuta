@@ -15,7 +15,7 @@ import java.util.List;
 public class OpenHours implements Serializable {
 
     @JsonProperty("open_now")
-    private Boolean openNow;
+    private boolean openNow;
 
     @JsonProperty("weekday_text")
     private List<String> weekdayText;
@@ -23,11 +23,11 @@ public class OpenHours implements Serializable {
     public OpenHours() {
     }
 
-    public Boolean getOpenNow() {
+    public boolean getOpenNow() {
         return openNow;
     }
 
-    public void setOpenNow(Boolean openNow) {
+    public void setOpenNow(boolean openNow) {
         this.openNow = openNow;
     }
 
@@ -46,13 +46,13 @@ public class OpenHours implements Serializable {
 
         OpenHours openHours = (OpenHours) o;
 
-        if (openNow != null ? !openNow.equals(openHours.openNow) : openHours.openNow != null) return false;
+        if (openNow != openHours.openNow) return false;
         return weekdayText != null ? weekdayText.equals(openHours.weekdayText) : openHours.weekdayText == null;
     }
 
     @Override
     public int hashCode() {
-        int result = openNow != null ? openNow.hashCode() : 0;
+        int result = (openNow ? 1 : 0);
         result = 31 * result + (weekdayText != null ? weekdayText.hashCode() : 0);
         return result;
     }

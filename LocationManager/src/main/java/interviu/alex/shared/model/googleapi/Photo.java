@@ -16,35 +16,35 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Photo implements Serializable {
 
-    private Integer height;
-    private Integer width;
+    private int height;
+    private int width;
 
     @JsonProperty("photo_reference")
     private String photoRef;
     @JsonProperty("html_attributions")
-    private List<String > htmlAttributes;
+    private List<String> htmlAttributes;
 
     //domain specific data
 
     @JsonIgnore
-    private Integer id;
+    private int id;
 
     public Photo() {
     }
 
-    public Integer getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
-    public Integer getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public void setWidth(Integer width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
@@ -64,11 +64,11 @@ public class Photo implements Serializable {
         this.htmlAttributes = htmlAttributes;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

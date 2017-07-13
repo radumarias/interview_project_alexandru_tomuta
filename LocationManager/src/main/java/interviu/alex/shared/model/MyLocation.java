@@ -11,9 +11,9 @@ import java.util.List;
 public class MyLocation implements Serializable{
 
     private String name;
-    private Integer id;
-    private Float latitude;
-    private Float longitude;
+    private int id;
+    private float latitude;
+    private float longitude;
 
     private List<Place> placeList;
 
@@ -25,11 +25,11 @@ public class MyLocation implements Serializable{
         this.name = name;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -41,19 +41,30 @@ public class MyLocation implements Serializable{
         this.placeList = placeList;
     }
 
-    public Float getLatitude() {
+    public float getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Float latitude) {
+    public void setLatitude(float latitude) {
         this.latitude = latitude;
     }
 
-    public Float getLongitude() {
+    public float getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Float longitude) {
+    public void setLongitude(float longitude) {
         this.longitude = longitude;
+    }
+
+    @Override
+    public String toString() {
+        return "MyLocation{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", placeList=" + placeList +
+                '}';
     }
 }

@@ -14,30 +14,30 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Location implements Serializable{
 
-    private Float lat;
-    private Float lng;
+    private float lat;
+    private float lng;
 
     public Location() {
     }
 
-    public Location(Float lat, Float lng) {
+    public Location(float lat, float lng) {
         this.lat = lat;
         this.lng = lng;
     }
 
-    public Float getLat() {
+    public float getLat() {
         return lat;
     }
 
-    public void setLat(Float lat) {
+    public void setLat(float lat) {
         this.lat = lat;
     }
 
-    public Float getLng() {
+    public float getLng() {
         return lng;
     }
 
-    public void setLng(Float lng) {
+    public void setLng(float lng) {
         this.lng = lng;
     }
 
@@ -48,14 +48,14 @@ public class Location implements Serializable{
 
         Location location = (Location) o;
 
-        if (lat != null ? !lat.equals(location.lat) : location.lat != null) return false;
-        return lng != null ? lng.equals(location.lng) : location.lng == null;
+        if (Float.compare(location.lat, lat) != 0) return false;
+        return Float.compare(location.lng, lng) == 0;
     }
 
     @Override
     public int hashCode() {
-        int result = lat != null ? lat.hashCode() : 0;
-        result = 31 * result + (lng != null ? lng.hashCode() : 0);
+        int result = (lat != +0.0f ? Float.floatToIntBits(lat) : 0);
+        result = 31 * result + (lng != +0.0f ? Float.floatToIntBits(lng) : 0);
         return result;
     }
 

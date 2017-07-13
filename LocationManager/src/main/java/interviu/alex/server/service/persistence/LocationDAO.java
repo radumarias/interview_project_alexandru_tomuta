@@ -5,13 +5,17 @@ import com.google.inject.persist.Transactional;
 import interviu.alex.server.service.persistence.model.LocationEntity;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Persistence service for retrieving Locations
  * Created by alexa on 7/10/2017.
  */
 public class LocationDAO {
+
+    Logger logger = Logger.getLogger(this.getClass().getSimpleName());
 
     public LocationDAO() {
     }
@@ -26,8 +30,15 @@ public class LocationDAO {
 
     @Transactional
     public LocationEntity getLocationByName(String name){
-        return em.createNamedQuery(LocationEntity.FIND_LOCATIONS_BY_NAME, LocationEntity.class)
-                .setParameter(LocationEntity.NAME, name).getSingleResult();
+        LocationEntity result = null;
+        try{
+            result = em.createNamedQuery(LocationEntity.FIND_LOCATIONS_BY_NAME, LocationEntity.class)
+                            .setParameter(LocationEntity.NAME, name).getSingleResult();
+        }
+        catch (NoResultException noResult){
+            logger.info("No result found for place name :"+name);
+        }
+        return result;
     }
 
     @Transactional
@@ -36,7 +47,7 @@ public class LocationDAO {
     }
 
     @Transactional
-    public void createLocation(LocationEntity locationEntity){
+    public void persistLocation(LocationEntity locationEntity){
         em.persist(locationEntity);
     }
 
@@ -45,4 +56,7 @@ public class LocationDAO {
         em.remove(locationEntity);
     }
 
+    public void updateLocation(LocationEntity locationEntity) {
+        em.merge(locationEntity);
+    }
 }

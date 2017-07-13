@@ -7,23 +7,23 @@ import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by alexa on 7/10/2017.
  */
 @Entity
+@Table(name = "PLACE")
 @NamedQueries({
-        @NamedQuery(name = PlaceEntity.FIND_ALL_FAVOURITE_PLACES, query = "select l from PLACE l where l.FAVOURITE = true"),
 })
 public class PlaceEntity {
 
-    public static final String FIND_ALL_FAVOURITE_PLACES = "findFavouritePlaces";
-
     @Id
-    @GeneratedValue
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
     @Column(name = "NAME")
     @NotNull
@@ -38,11 +38,11 @@ public class PlaceEntity {
 
     @NotNull
     @Column(name = "LATITUDE")
-    private Float latitude;
+    private float latitude;
 
     @NotNull
     @Column(name = "LONGITUDE")
-    private Float longitude;
+    private float longitude;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,20 +51,20 @@ public class PlaceEntity {
 
     @OneToMany(mappedBy = "place")
     @Cascade(CascadeType.ALL)
-    private List<PhotoEntity> photoList;
+    private List<PhotoEntity> photoList = new ArrayList<>();
 
     @NotNull
     @Column(name = "GOOGLE_PLACE_ID")
     private String googlePlaceId;
 
     @Column(name = "USER_EDITED")
-    private Boolean userEdited;
+    private boolean userEdited = Boolean.FALSE;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -92,19 +92,19 @@ public class PlaceEntity {
         Address = address;
     }
 
-    public Float getLatitude() {
+    public float getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Float latitude) {
+    public void setLatitude(float latitude) {
         this.latitude = latitude;
     }
 
-    public Float getLongitude() {
+    public float getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Float longitude) {
+    public void setLongitude(float longitude) {
         this.longitude = longitude;
     }
 
@@ -116,11 +116,11 @@ public class PlaceEntity {
         this.location = location;
     }
 
-    public Boolean getUserEdited() {
+    public boolean getUserEdited() {
         return userEdited;
     }
 
-    public void setUserEdited(Boolean userEdited) {
+    public void setUserEdited(boolean userEdited) {
         this.userEdited = userEdited;
     }
 

@@ -17,6 +17,9 @@ import interviu.alex.shared.model.googleapi.Location;
 import interviu.alex.shared.model.googleapi.Place;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -27,9 +30,6 @@ public class LocationSearchServiceImpl extends RemoteServiceServlet implements
         LocationSearchService {
 
     @Inject
-    private PlaceDAO placeDAO;
-
-    @Inject
     private LocationDAO locationDAO;
 
     @Inject
@@ -38,43 +38,59 @@ public class LocationSearchServiceImpl extends RemoteServiceServlet implements
     @Inject
     private GooglePlacesService googlePlacesService;
 
+    private Logger logger = Logger.getLogger(this.getClass().getSimpleName());
+
     public LocationSearchServiceImpl(){}
 
     @Transactional
     public MyLocation searchByCity(MyLocation input) throws IllegalArgumentException {
         GooglePlacesResponse response = googlePlacesService.queryGoogleForPlaces(input);
         LocationEntity locationEntity = locationDAO.getLocationByName(input.getName());
-
+        // todo if we don't find it in the db, map google response directly to MyLocation. User can dedice to save or not
+        // todo and if that's the case, MyLocation will be mapped to locationEntity on request.
+        if(locationEntity == null){
+            locationEntity = new LocationEntity();
+        }
         checkAndUpdatePlaces(response, locationEntity);
-        return mapper.buildLocation(locationEntity);
+        MyLocation location = mapper.buildLocation(locationEntity);
+        logger.log(Level.INFO, "Sending to client :\n"+String.valueOf(location)+ "\n\n");
+        return location;
     }
 
 
     private void checkAndUpdatePlaces(GooglePlacesResponse response, LocationEntity locationEntity) {
-        if(response == null || locationEntity == null){
+        if(response == null){
             return;
         }
 
         List<Place> googleApiPlaces = response.getResults();
         googleApiPlaces.forEach(place ->{
-            List<PlaceEntity> updatedPlaces = locationEntity.getPlaces().stream()
-                    .filter(myPlace -> place.getPlaceId().equals(myPlace.getGooglePlaceId()))
-                    .filter(myPlace -> !myPlace.getUserEdited())
-                    .map(myPlace -> {
-                        myPlace.setAddress(place.getFormattedAddress());
-                        myPlace.setGooglePlaceId(place.getPlaceId());
-                        myPlace.setLatitude(place.getGeometry().getLocation().getLat());
-                        myPlace.setLongitude(place.getGeometry().getLocation().getLng());
-                        myPlace.setName(place.getName());
-                        myPlace.setType(place.getTypes().stream().collect(Collectors.joining(",")));
-                        myPlace.setPhotoList(place.getPhotos().stream()
-                                .map(photo -> new PhotoEntity(photo.getPhotoRef(), myPlace)).collect(Collectors.toList()));
-
-                        return myPlace;
-                    }).collect(Collectors.toList());
-            locationEntity.setPlaces(updatedPlaces);
+            // search for place current list places in locationEntity -> if we don't find one, we just map the place to a new placeEntity
+            PlaceEntity placeEntity = locationEntity.getPlaces().stream()
+                    .filter(placeEnt -> place.getPlaceId().equals(placeEnt.getGooglePlaceId()))
+                    .findAny()
+                    .orElse(mapper.mapPlaceEntity(place));
+            // if the placeEntity found is not edited (dirty flag) and has an ID (already persisted to db)
+            if(!placeEntity.getUserEdited() && placeEntity.getId() != 0){
+                updateDbVersionWithNewValues(placeEntity, place);
+            }
+            // if this is a new mapped place -> add it to the locationEntity places list
+            if(placeEntity.getId() == 0){
+                locationEntity.getPlaces().add(placeEntity);
+            }
         });
 
+    }
+
+    private void updateDbVersionWithNewValues(PlaceEntity myPlace, Place place) {
+        myPlace.setAddress(place.getFormattedAddress());
+        myPlace.setGooglePlaceId(place.getPlaceId());
+        myPlace.setLatitude(place.getGeometry().getLocation().getLat());
+        myPlace.setLongitude(place.getGeometry().getLocation().getLng());
+        myPlace.setName(place.getName());
+        myPlace.setType(place.getTypes().stream().collect(Collectors.joining(",")));
+        myPlace.setPhotoList(place.getPhotos().stream()
+                .map(photo -> new PhotoEntity(photo.getPhotoRef(), myPlace)).collect(Collectors.toList()));
     }
 
     public void addNewLocation(MyLocation location){
@@ -82,7 +98,7 @@ public class LocationSearchServiceImpl extends RemoteServiceServlet implements
             throw new IllegalArgumentException("Cannot persist null values");
         }
         LocationEntity locationEntity = mapper.buildEntity(location);
-        locationDAO.createLocation(locationEntity);
+        locationDAO.persistLocation(locationEntity);
     }
 
     public void updatePlaces(MyLocation location){
@@ -90,7 +106,7 @@ public class LocationSearchServiceImpl extends RemoteServiceServlet implements
             throw new IllegalArgumentException("Cannot persist null values");
         }
         LocationEntity locationEntity = mapper.buildEntity(location);
-        locationDAO.createLocation(locationEntity);
+        locationDAO.updateLocation(locationEntity);
     }
 
 }

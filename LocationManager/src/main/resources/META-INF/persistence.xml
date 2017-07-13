@@ -13,7 +13,16 @@
         <class>interviu.alex.server.service.persistence.model.PlaceEntity</class>
         <class>interviu.alex.server.service.persistence.model.PhotoEntity</class>
         <properties>
-            <!-- vendor-specific properties go here -->
+            <property name="hibernate.archive.autodetection" value="class" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect" />
+            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver" />
+            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/location_manager" />
+            <property name="hibernate.connection.username" value="postgres" />
+            <property name="hibernate.connection.password" value="postgres" />
+            <!-- print sql statements -->
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.flushMode" value="FLUSH_AUTO" />
+            <property name="hibernate.hbm2ddl.auto" value="validate" />
         </properties>
     </persistence-unit>
 

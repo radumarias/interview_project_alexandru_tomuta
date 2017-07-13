@@ -9,6 +9,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,8 +19,8 @@ import java.util.List;
 @Entity
 @Table(name = "LOCATION")
 @NamedQueries({
-        @NamedQuery(name = LocationEntity.FIND_LOCATIONS_BY_NAME, query = "select l from LOCATION l where l.name = :name"),
-        @NamedQuery(name = LocationEntity.FIND_ALL_LOCATIONS, query = "select l from LOCATION l")
+        @NamedQuery(name = LocationEntity.FIND_LOCATIONS_BY_NAME, query = "from LocationEntity l where l.name = :name"),
+        @NamedQuery(name = LocationEntity.FIND_ALL_LOCATIONS, query = "from LocationEntity l")
 })
 public class LocationEntity {
 
@@ -28,9 +29,9 @@ public class LocationEntity {
     public static final String FIND_ALL_LOCATIONS= "findAllLocations";
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
-    private Integer id;
+    private int id;
 
     @Column(name = "NAME")
     @NotNull
@@ -38,21 +39,21 @@ public class LocationEntity {
 
     @Column(name = "LATITUDE")
     @NotNull
-    private Float latitude;
+    private float latitude;
 
     @Column(name = "LONGITUDE")
     @NotNull
-    private Float longitude;
+    private float longitude;
 
     @OneToMany(mappedBy = "location")
     @Cascade(CascadeType.ALL)
-    private List<PlaceEntity> places;
+    private List<PlaceEntity> places = new ArrayList<>();
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -64,19 +65,19 @@ public class LocationEntity {
         this.name = name;
     }
 
-    public Float getLatitude() {
+    public float getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Float latitude) {
+    public void setLatitude(float latitude) {
         this.latitude = latitude;
     }
 
-    public Float getLongitude() {
+    public float getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Float longitude) {
+    public void setLongitude(float longitude) {
         this.longitude = longitude;
     }
 
@@ -95,16 +96,14 @@ public class LocationEntity {
 
         LocationEntity that = (LocationEntity) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (latitude != null ? !latitude.equals(that.latitude) : that.latitude != null) return false;
-        return longitude != null ? longitude.equals(that.longitude) : that.longitude == null;
+        if (id != that.id) return false;
+        return name != null ? name.equals(that.name) : that.name == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (latitude != null ? latitude.hashCode() : 0);
-        result = 31 * result + (longitude != null ? longitude.hashCode() : 0);
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
 
