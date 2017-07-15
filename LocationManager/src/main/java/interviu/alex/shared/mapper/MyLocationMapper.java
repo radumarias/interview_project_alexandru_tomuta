@@ -24,6 +24,7 @@ public class MyLocationMapper {
         }
 
         LocationEntity locationEntity = new LocationEntity();
+        locationEntity.setId(myLocation.getId());
         locationEntity.setName(myLocation.getName());
         locationEntity.setLatitude(myLocation.getLatitude());
         locationEntity.setLongitude(myLocation.getLongitude());
@@ -44,6 +45,9 @@ public class MyLocationMapper {
         }
 
         PlaceEntity placeEntity = new PlaceEntity();
+        placeEntity.setId(place.getId());
+        placeEntity.setUserEdited(place.getUserEdited());
+        placeEntity.setRating(place.getRating());
         placeEntity.setName(place.getName());
         placeEntity.setType(place.getTypes().stream().collect(Collectors.joining(",")));
         placeEntity.setAddress(place.getFormattedAddress());
@@ -90,8 +94,10 @@ public class MyLocationMapper {
 
         Place place = new Place();
         place.setId(placeEntity.getId());
+        place.setRating(placeEntity.getRating());
         place.setName(placeEntity.getName());
         place.setFormattedAddress(placeEntity.getAddress());
+        place.setUserEdited(placeEntity.getUserEdited());
         place.setGeometry(new Geometry(new Location(placeEntity.getLatitude(), placeEntity.getLongitude())));
         Optional.ofNullable(placeEntity.getPhotoList())
                 .ifPresent(list ->

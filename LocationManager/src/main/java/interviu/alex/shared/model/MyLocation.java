@@ -17,6 +17,9 @@ public class MyLocation implements Serializable{
 
     private List<Place> placeList;
 
+    public MyLocation() {
+    }
+
     public String getName() {
         return name;
     }

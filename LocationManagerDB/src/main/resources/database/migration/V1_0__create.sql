@@ -9,7 +9,8 @@ create table LOCATION (
 create table PLACE (
   ID int NOT NULL ,
   NAME varchar(80) NOT NULL UNIQUE,
-  TYPE varchar(20),
+  TYPE varchar(100),
+  RATING real,
   ADDRESS varchar(100),
   LATITUDE real NOT NULL ,
   LONGITUDE real NOT NULL ,

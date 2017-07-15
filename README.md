@@ -14,19 +14,20 @@ DONE:
 * Google API autocomplete for location search
 * Google API places response mapping - using Jackson Json mapper
 * DB integration - add Hibernate support, entities, persistence layer
-* Persist locations to DB
 * Enable CRUD operation for locations
 * Cross check location look-up with DB values and update accordingly
 * ~~Do we need to make Google API calls from back-end? We can just move these API calls in client and
 any CRUD operations - saved in back-end db.~~
+* Display locations from DB on client-side
+* Enable CRUD operations on Client
+* Google response validation - api limit exceeded
+* Client input validation
 
 TODO:
 
-* Display locations from DB on client-side
+* Implement unit tests - code coverage
 * Setup docker container for GWT app
-* Implement unit tests
-* Create module for Integration Tests
-* Finish world domination
+* Create module for Integration Tests - create google places api simulator (otherwise we'll reach the quota really fast)
 
 ### LocationManager-DB
 

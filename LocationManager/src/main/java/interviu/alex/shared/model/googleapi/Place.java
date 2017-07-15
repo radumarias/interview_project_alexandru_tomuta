@@ -194,10 +194,23 @@ public class Place implements Serializable {
 
     @Override
     public String toString() {
-        return "PlaceEntity{" +
-                "id='" + id + '\'' +
+        return "Place{" +
+                "icon='" + icon + '\'' +
                 ", name='" + name + '\'' +
+                ", reference='" + reference + '\'' +
+                ", scope='" + scope + '\'' +
+                ", vicinity='" + vicinity + '\'' +
+                ", types=" + types +
+                ", geometry=" + geometry +
+                ", photos=" + photos +
+                ", rating=" + rating +
+                ", addressComponents=" + addressComponents +
+                ", formattedAddress='" + formattedAddress + '\'' +
                 ", placeId='" + placeId + '\'' +
+                ", openHours=" + openHours +
+                ", priceLevel=" + priceLevel +
+                ", id=" + id +
+                ", userEdited=" + userEdited +
                 '}';
     }
 }

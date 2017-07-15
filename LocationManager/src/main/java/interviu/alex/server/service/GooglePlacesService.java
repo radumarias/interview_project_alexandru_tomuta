@@ -48,9 +48,17 @@ public class GooglePlacesService {
 
         String url = builder.toUriString();
         logger.log(Level.INFO, "Request URL: "+url);
-        ResponseEntity<GooglePlacesResponse> responseEntity = restTemplate.getForEntity(url, GooglePlacesResponse.class);
-        logger.log(Level.INFO, getLogString(responseEntity));
-        return populateWithDetails(responseEntity.getBody());
+        try {
+            ResponseEntity<GooglePlacesResponse> responseEntity = restTemplate.getForEntity(url, GooglePlacesResponse.class);
+            if(responseEntity.getBody().getErrorMessage() != null && !responseEntity.getBody().getErrorMessage().isEmpty()){
+                throw new GoogleRequestException("Status code returned: ["+responseEntity.getStatusCode()+"] , message: ["+responseEntity.getBody().getErrorMessage()+"]");
+            }
+            return populateWithDetails(responseEntity.getBody());
+        }
+        catch(GoogleRequestException gre){
+            logger.log(Level.SEVERE, "Exception calling google service", gre);
+            return null;
+        }
     }
 
     /**
@@ -58,14 +66,13 @@ public class GooglePlacesService {
      * @param googleLocation location with places around
      * @return googlePlacesResponse with detailed places around it
      */
-    private GooglePlacesResponse populateWithDetails(GooglePlacesResponse googleLocation) {
-        List<Place> results = googleLocation.getResults();
-        results.forEach(place ->{
+    private GooglePlacesResponse populateWithDetails(GooglePlacesResponse googleLocation) throws GoogleRequestException {
+        for(Place place : googleLocation.getResults()){
             Place detailedPlace = queryDetails(place.getPlaceId());
             place.setFormattedAddress(detailedPlace.getFormattedAddress());
             place.setRating(detailedPlace.getRating());
             //todo add other stuff we could be interested in
-        });
+        }
         return googleLocation;
     }
 
@@ -74,7 +81,7 @@ public class GooglePlacesService {
      * @param placeId place to get detauls about
      * @return Place with details
      */
-    private Place queryDetails(String placeId) {
+    private Place queryDetails(String placeId) throws GoogleRequestException {
         RestTemplate restTemplate = new RestTemplate();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL_DETAILS + RESPONSE_CONTENT_TYPE)
@@ -84,12 +91,14 @@ public class GooglePlacesService {
         String url = builder.toUriString();
         logger.log(Level.INFO, "Place details request URL: "+url);
         ResponseEntity<GooglePlaceDetailsResponse> responseEntity = restTemplate.getForEntity(url, GooglePlaceDetailsResponse.class);
-        logger.log(Level.INFO, getLogString(responseEntity));
+        if(responseEntity.getBody().getErrorMessage() != null && !responseEntity.getBody().getErrorMessage().isEmpty()){
+            throw new GoogleRequestException("Status code returned: ["+responseEntity.getStatusCode()+"] , message: ["+responseEntity.getBody().getErrorMessage()+"]");
+        }
 
         return responseEntity.getBody().getPlace();
     }
 
     private String getLogString(ResponseEntity<?> responseEntity) {
-        return  "Response from google: " + responseEntity.getStatusCode().name() +", with values: \n\n" + responseEntity.getBody() + "\n\n";
+        return  "Response from google: " + responseEntity.getStatusCode().name() +", with values: \n" + responseEntity.getBody();
     }
 }

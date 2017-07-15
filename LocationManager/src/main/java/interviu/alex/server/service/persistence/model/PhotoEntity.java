@@ -17,7 +17,6 @@ public class PhotoEntity {
     @Column(name = "PICTURE_REF")
     private String pictureRef;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PLACE_ID")
     private PlaceEntity place;

@@ -16,7 +16,8 @@ public class GooglePlaceDetailsResponse {
 
     @JsonProperty("html_attributions")
     private List<String> htmlAttributions;
-
+    @JsonProperty("error_message")
+    private String errorMessage;
     @JsonProperty("result")
     private Place place;
 
@@ -34,6 +35,14 @@ public class GooglePlaceDetailsResponse {
 
     public void setPlace(Place place) {
         this.place = place;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     @Override

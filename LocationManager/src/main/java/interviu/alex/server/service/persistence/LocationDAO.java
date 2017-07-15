@@ -1,6 +1,7 @@
 package interviu.alex.server.service.persistence;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import interviu.alex.server.service.persistence.model.LocationEntity;
 
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
  * Persistence service for retrieving Locations
  * Created by alexa on 7/10/2017.
  */
+@Transactional
 public class LocationDAO {
 
     Logger logger = Logger.getLogger(this.getClass().getSimpleName());
@@ -21,18 +23,16 @@ public class LocationDAO {
     }
 
     @Inject
-    private EntityManager em;
+    private Provider<EntityManager> em;
 
-    @Transactional
     public LocationEntity getLocationById(Integer locationId){
-        return em.find(LocationEntity.class, locationId);
+        return em.get().find(LocationEntity.class, locationId);
     }
 
-    @Transactional
     public LocationEntity getLocationByName(String name){
         LocationEntity result = null;
         try{
-            result = em.createNamedQuery(LocationEntity.FIND_LOCATIONS_BY_NAME, LocationEntity.class)
+            result = em.get().createNamedQuery(LocationEntity.FIND_LOCATIONS_BY_NAME, LocationEntity.class)
                             .setParameter(LocationEntity.NAME, name).getSingleResult();
         }
         catch (NoResultException noResult){
@@ -41,22 +41,19 @@ public class LocationDAO {
         return result;
     }
 
-    @Transactional
     public List<LocationEntity> getAllLocations(){
-        return em.createNamedQuery(LocationEntity.FIND_ALL_LOCATIONS, LocationEntity.class).getResultList();
+        return em.get().createNamedQuery(LocationEntity.FIND_ALL_LOCATIONS, LocationEntity.class).getResultList();
     }
 
-    @Transactional
     public void persistLocation(LocationEntity locationEntity){
-        em.persist(locationEntity);
+        em.get().persist(locationEntity);
     }
 
-    @Transactional
     public void removeLocation(LocationEntity locationEntity){
-        em.remove(locationEntity);
+        em.get().remove(locationEntity);
     }
 
     public void updateLocation(LocationEntity locationEntity) {
-        em.merge(locationEntity);
+        em.get().merge(locationEntity);
     }
 }

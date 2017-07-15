@@ -15,10 +15,13 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GooglePlacesResponse {
 
-    @JsonProperty("html_attributions")
-    private List<String> htmlAttributions;
     private Status status;
     private List<Place> results;
+
+    @JsonProperty("error_message")
+    private String errorMessage;
+    @JsonProperty("html_attributions")
+    private List<String> htmlAttributions;
 
     public GooglePlacesResponse() {
     }
@@ -45,6 +48,14 @@ public class GooglePlacesResponse {
 
     public void setResults(List<Place> results) {
         this.results = results;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     @Override

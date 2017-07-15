@@ -44,12 +44,15 @@ public class PlaceEntity {
     @Column(name = "LONGITUDE")
     private float longitude;
 
+    @Column(name = "RATING")
+    private float rating;
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "LOCATION_ID")
     private LocationEntity location;
 
-    @OneToMany(mappedBy = "place")
+    @OneToMany(mappedBy = "place", orphanRemoval = true)
     @Cascade(CascadeType.ALL)
     private List<PhotoEntity> photoList = new ArrayList<>();
 
@@ -138,5 +141,17 @@ public class PlaceEntity {
 
     public void setGooglePlaceId(String googlePlaceId) {
         this.googlePlaceId = googlePlaceId;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public boolean isUserEdited() {
+        return userEdited;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 }

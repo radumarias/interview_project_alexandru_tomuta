@@ -2,7 +2,7 @@ package interviu.alex.server.service.remote;
 
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
-import interviu.alex.client.LocationSearchService;
+import interviu.alex.client.service.LocationSearchService;
 import interviu.alex.server.model.GooglePlacesResponse;
 import interviu.alex.server.service.GooglePlacesService;
 import interviu.alex.server.service.persistence.LocationDAO;
@@ -13,9 +13,11 @@ import interviu.alex.server.service.persistence.model.PhotoEntity;
 import interviu.alex.server.service.persistence.model.PlaceEntity;
 import interviu.alex.shared.mapper.MyLocationMapper;
 import interviu.alex.shared.model.MyLocation;
-import interviu.alex.shared.model.googleapi.Location;
+import interviu.alex.shared.model.googleapi.Photo;
 import interviu.alex.shared.model.googleapi.Place;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -33,6 +35,9 @@ public class LocationSearchServiceImpl extends RemoteServiceServlet implements
     private LocationDAO locationDAO;
 
     @Inject
+    private PlaceDAO placeDAO;
+
+    @Inject
     private MyLocationMapper mapper;
 
     @Inject
@@ -45,20 +50,27 @@ public class LocationSearchServiceImpl extends RemoteServiceServlet implements
     @Transactional
     public MyLocation searchByCity(MyLocation input) throws IllegalArgumentException {
         GooglePlacesResponse response = googlePlacesService.queryGoogleForPlaces(input);
+        //todo should we do a search by lat/lng? maybe a location name changes..
         LocationEntity locationEntity = locationDAO.getLocationByName(input.getName());
-        // todo if we don't find it in the db, map google response directly to MyLocation. User can dedice to save or not
-        // todo and if that's the case, MyLocation will be mapped to locationEntity on request.
+//        todo if we don't find it in the db, map google response directly to MyLocation.User can decide to save or not and if that's the case, MyLocation will be mapped to locationEntity on request.
         if(locationEntity == null){
             locationEntity = new LocationEntity();
         }
         checkAndUpdatePlaces(response, locationEntity);
+        checkAndUpdateLocation(input, locationEntity);
         MyLocation location = mapper.buildLocation(locationEntity);
-        logger.log(Level.INFO, "Sending to client :\n"+String.valueOf(location)+ "\n\n");
+        logger.log(Level.INFO, "Sending to client :\n"+String.valueOf(location));
         return location;
     }
 
+    private void checkAndUpdateLocation(MyLocation input, LocationEntity locationEntity) {
+        locationEntity.setLatitude(input.getLatitude());
+        locationEntity.setLongitude(input.getLongitude());
+        locationEntity.setName(input.getName());
+    }
 
     private void checkAndUpdatePlaces(GooglePlacesResponse response, LocationEntity locationEntity) {
+        //if google response - we just populate with data from db
         if(response == null){
             return;
         }
@@ -89,11 +101,17 @@ public class LocationSearchServiceImpl extends RemoteServiceServlet implements
         myPlace.setLongitude(place.getGeometry().getLocation().getLng());
         myPlace.setName(place.getName());
         myPlace.setType(place.getTypes().stream().collect(Collectors.joining(",")));
-        myPlace.setPhotoList(place.getPhotos().stream()
+
+        //we remove the current set of photos we have associated with a place - they'll be removed by hibernate (orphan removal = true)
+        Optional.ofNullable(myPlace.getPhotoList()).orElse(Collections.emptyList()).clear();
+        //for each place we update the set of photos with what google provides us
+        myPlace.getPhotoList().addAll(Optional.ofNullable(place.getPhotos()).orElse(Collections.emptyList()).stream()
+                .filter(photo -> photo != null && photo.getPhotoRef() != null)
                 .map(photo -> new PhotoEntity(photo.getPhotoRef(), myPlace)).collect(Collectors.toList()));
     }
 
     public void addNewLocation(MyLocation location){
+        logger.log(Level.INFO, "New addLocation for: "+location);
         if(location == null){
             throw new IllegalArgumentException("Cannot persist null values");
         }
@@ -101,12 +119,21 @@ public class LocationSearchServiceImpl extends RemoteServiceServlet implements
         locationDAO.persistLocation(locationEntity);
     }
 
-    public void updatePlaces(MyLocation location){
+    @Transactional
+    public void updateLocation(MyLocation location){
+        logger.log(Level.INFO, "New updateLocation for: "+location);
         if(location == null){
             throw new IllegalArgumentException("Cannot persist null values");
         }
         LocationEntity locationEntity = mapper.buildEntity(location);
         locationDAO.updateLocation(locationEntity);
+        for(PlaceEntity placeEntity : locationEntity.getPlaces()) {
+            if(placeEntity.getUserEdited()) {
+                placeDAO.updatePlace(placeEntity);
+            }
+        }
     }
+
+
 
 }

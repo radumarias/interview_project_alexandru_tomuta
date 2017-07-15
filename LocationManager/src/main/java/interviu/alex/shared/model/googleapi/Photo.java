@@ -26,6 +26,12 @@ public class Photo implements Serializable {
 
     //domain specific data
 
+    /**
+     * used in Client to store image urls from google
+     */
+    @JsonIgnore
+    private String imageUrl;
+
     @JsonIgnore
     private int id;
 
@@ -70,6 +76,14 @@ public class Photo implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
